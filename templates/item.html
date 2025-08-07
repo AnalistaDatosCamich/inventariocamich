@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Detalle del Artículo</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="shortcut icon" href="../static/CamichLogo.ico">
+</head>
+<body>
+    <div id="container">
+
+    <h1>{{ item[1] + " " + item[2]}}</h1> <!-- Descripción -->
+    <div class="form-grid">
+        <ul id="information">
+            <li><strong>Código:</strong> {{ item[1] }}</li>
+            <li><strong>Descripción:</strong> {{ item[2] }}</li>
+            <li><strong>Identificador:</strong> {{ item[4] }}</li>
+            <li><strong>Usuario:</strong> {{ item[5] }}</li>
+            <li><strong>Departamento:</strong> {{ item[1] }}</li>
+            <li><strong>Notas adicionales:</strong> {{ item[6] }}</li>
+        </ul>
+        <div class="image-section">
+            <div id="item-image"><img src="{{ url_for('static', filename='images/' + (item[7] or 'camich.png')) }}" width="200"></div>  
+            <div class="image-buttons">
+                <button> Descargar QR </button>
+            </div>
+        </div>  
+    </div>
+
+        <a href="{{ url_for('index') }}">← Volver al inventario</a>
+    </div>
+</body>
+</html>

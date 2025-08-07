@@ -1,0 +1,140 @@
+:root {
+    --main-color: #8db93d;
+    --second-color: #0260aa;
+    --third-color: aliceblue;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: var(--main-color);
+    color: #333;
+}
+
+h1 {
+    background-color: var(--third-color);
+    color: var(--second-color);       /* Cambia el color del texto */
+    font-family: Arial, sans-serif;
+    font-size: 28px;
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#information { 
+    margin: 5px;
+    float:left;
+    width: 50%;
+}
+
+
+
+#item-image img{
+    margin: 5px;
+    border-radius: 5px;
+}
+
+.image-buttons {
+    display: flex;
+    justify-content: center;
+}
+
+.image-section button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.5s ease;
+    background: var(--main-color);
+}
+
+.image-section button:hover {
+    color: var(--third-color);
+    background-color: var(--second-color)
+}
+
+.nav-link {
+    background: none;
+    border: 0;
+    color: var(--second-color);
+    display: block;
+}
+
+table {
+    width: 100%;
+}
+
+table, th, td {
+    border: 2px solid;
+    border-color: var(--second-color);
+    border-collapse: collapse;
+}
+
+td {
+    padding-left: 5px;
+}
+
+th {
+    background-color: var(--main-color);
+}
+
+.input-btn {
+    border-color: var(--second-color);
+    border-radius: 20px;
+    background-color: var(--third-color);
+    color: var(--second-color); 
+}
+
+.input-btn:hover{
+    color: var(--third-color);
+    background-color: var(--main-color);
+}
+
+#qr-button{
+    background-color: var(--main-color);
+}
+
+a, a:visited {
+    color: var(--second-color);
+}
+
+a:hover {
+    color: var(--main-color);
+}
+
+#iniciar_sesion {
+    background: #e3f2fd;
+    border: 2px solid var(--second-color);
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.5s ease;
+    color: var(--second-color);
+}
+
+#iniciar_sesion:hover {
+    color: aliceblue;
+    background-color: var(--second-color);
+}
+
+#container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--third-color);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-grid {
+    display: flex;
+    flex: 1;
+    justify-content: space-evenly;
+    flex-direction: row-reverse;
+}

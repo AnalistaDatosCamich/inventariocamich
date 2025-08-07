@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Administrar Inventario</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="shortcut icon" href="../static/CamichLogo.ico">
+</head>
+<body>
+<div id="container">
+    <h1>Panel de Administración</h1>
+    <h2>{{ 'Editar' if item else 'Agregar' }} Item</h2>
+    <form method="POST" enctype="multipart/form-data">
+        {% if item %}<input type="hidden" name="id" value="{{ item[0] }}">{% endif %}
+        <p>Código: <input type="text" name="codigo" value="{{ item[1] if item else '' }}"></p>
+        <p>Descripción: <input type="text" name="descripcion" value="{{ item[2] if item else '' }}"></p>
+        <p>Usuario: <input type="text" name="usuario" value="{{ item[4] if item else '' }}"></p>
+        <p>Departamento: <input type="text" name="departamento" value="{{ item[5] if item else '' }}"></p>
+        <p>Foto: <input type="file" name="foto" accept="image/*" value="{{ item[7] if item}}"></p>
+        <input class="input-btn" type="submit" value="{{ 'Guardar' if item else 'Agregar' }}">
+        {% if item %}
+            <input class="input-btn" type="submit" value="Cancelar">
+        {% endif %}
+    </form>
+    {{item[5]}}
+
+
+    <h2>Artículos existentes</h2>
+    <table >
+        <tr>
+            <th>Código</th>
+            <th>Descripción</th>
+            <th>Usuario</th>
+            <th>Departamento</th>
+            <th>Foto</th>
+            <th>Editar</th>
+            <th>Eliminar</th>
+        </tr>
+        {% for item in items %}
+        <tr>
+            <td>{{ item[1] }}</td> <!-- código -->
+            <td>{{ item[2] }}</td> <!-- descripción -->
+            <td>{{ item[4] }}</td> <!-- usuario -->
+            <td>{{ item[5] }}</td> <!-- departamento -->
+            <td><img src="{{ url_for('static', filename='images/' + ((item[7]) or 'camich.png')) }}" width="50"></td>
+            <td><a href="{{ url_for('admin', id=item[0]) }}">Editar</a></td>
+            <td><a href="{{ url_for('delete', item_id=item[0]) }}">Eliminar</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    <p><a href="{{ url_for('index') }}">Inventario</a></p>
+</div>
+</body>
+</html>

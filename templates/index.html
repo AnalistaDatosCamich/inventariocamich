@@ -1,0 +1,37 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventario</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="shortcut icon" href="../static/CamichLogo.ico">
+</head>
+<body>
+    <div id="container">
+        <h1>Inventario de Artículos</h1>
+        <a href="{{ url_for('admin') }}" class="nav-link">Modo administrador</a>
+        <table >
+            <tr>
+                <th>Código</th>
+                <th>Descripción</th>
+                <th>Usuario</th>
+                <th>Departamento</th>
+                <th>Foto</th>
+                <th>Descripción detallada</th>
+            </tr>
+            {% for item in items %}           
+            <tr>
+                <td>{{ item[1] }}</td> <!-- código -->
+                <td>{{ item[2] }}</td> <!-- descripción -->
+                <td>{{ item[4] }}</td> <!-- usuario -->
+                <td>{{ item[5] }}</td> <!-- departamento -->
+                <td><img src="{{ url_for('static', filename='images/' + (item[7] or 'camich.png')) }}" width="50"></td>
+                <td>
+                    <a href="{{ url_for('item_detail', item_id=item[0]) }}">Ver más</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>
