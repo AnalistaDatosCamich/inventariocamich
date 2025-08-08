@@ -13,9 +13,9 @@
         <ul id="information">
             <li><strong>Código:</strong> {{ item[1] }}</li>
             <li><strong>Descripción:</strong> {{ item[2] }}</li>
-            <li><strong>Identificador:</strong> {{ item[4] }}</li>
-            <li><strong>Usuario:</strong> {{ item[5] }}</li>
-            <li><strong>Departamento:</strong> {{ item[1] }}</li>
+            <li><strong>Identificador:</strong> {{ item[3] }}</li>
+            <li><strong>Usuario:</strong> {{ item[4] }}</li>
+            <li><strong>Departamento:</strong> {{ item[5] }}</li>
             <li><strong>Notas adicionales:</strong> {{ item[6] }}</li>
         </ul>
         <div class="image-section">
@@ -23,10 +23,11 @@
             <div class="image-buttons">
                 <button> Descargar QR </button>
             </div>
-        </div>  
+        </div>
+        <div id="back-to-inventory"><a href="{{ url_for('index') }}">← Volver al inventario</a></div>  
     </div>
 
-        <a href="{{ url_for('index') }}">← Volver al inventario</a>
+        
     </div>
 </body>
 </html>

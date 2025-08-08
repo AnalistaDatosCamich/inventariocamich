@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Administrar Prefijos</title>
+    <link rel="stylesheet" href="../static/style.css">
+    <link rel="shortcut icon" href="../static/CamichLogo.ico">
+</head>
+<body>
+<div id="container">
+    <h1>Administrar Prefijos</h1>
+    
+    <h2>Agregar Nuevo Prefijo</h2>
+    <div class="admin-form">
+        <form method="POST">
+            <p>Prefijo: <input type="text" name="prefijo" maxlength="3" style="text-transform: uppercase;" required></p>
+            <p>Descripción: <input type="text" name="descripcion" required></p>
+            <input class="input-btn" type="submit" value="Agregar Prefijo">
+        </form>
+        <div id="back-to-inventory">
+            <a href="{{ url_for('admin') }}">← Volver al panel de administración</a>
+        </div>
+    </div>
+
+    <h2>Prefijos Existentes</h2>
+    <table>
+        <tr>
+            <th>Prefijo</th>
+            <th>Descripción</th>
+            <th>Eliminar</th>
+        </tr>
+        {% for prefijo in prefijos %}
+        <tr>
+            <td>{{ prefijo[1] }}</td> <!-- prefijo -->
+            <td>{{ prefijo[2] }}</td> <!-- descripción -->
+            <td><a href="{{ url_for('delete_prefijo', prefijo_id=prefijo[0]) }}">Eliminar</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+</body>
+</html>

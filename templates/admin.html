@@ -10,20 +10,43 @@
 <div id="container">
     <h1>Panel de Administración</h1>
     <h2>{{ 'Editar' if item else 'Agregar' }} Item</h2>
-    <form method="POST" enctype="multipart/form-data">
-        {% if item %}<input type="hidden" name="id" value="{{ item[0] }}">{% endif %}
-        <p>Código: <input type="text" name="codigo" value="{{ item[1] if item else '' }}"></p>
-        <p>Descripción: <input type="text" name="descripcion" value="{{ item[2] if item else '' }}"></p>
-        <p>Usuario: <input type="text" name="usuario" value="{{ item[4] if item else '' }}"></p>
-        <p>Departamento: <input type="text" name="departamento" value="{{ item[5] if item else '' }}"></p>
-        <p>Foto: <input type="file" name="foto" accept="image/*" value="{{ item[7] if item}}"></p>
-        <input class="input-btn" type="submit" value="{{ 'Guardar' if item else 'Agregar' }}">
-        {% if item %}
-            <input class="input-btn" type="submit" value="Cancelar">
-        {% endif %}
-    </form>
-    {{item[5]}}
+    <div class="admin-form">
+        <form method="POST" enctype="multipart/form-data">
+            {% if item %}<input type="hidden" name="id" value="{{ item[0] }}">{% endif %}
+            {% if item %}<input type="hidden" name="codigo_actual" value="{{ item[1] }}">{% endif %}            
 
+            <p>Prefijo: 
+            <select name="prefijo" required {{ 'disabled' if item else '' }}>
+                <option value="">-- Selecciona un prefijo --</option>
+                {% for prefijo in prefijos %}
+                <option value="{{ prefijo[0] }}" {{ 'selected' if item and item[1].startswith(prefijo[0]) else '' }}>
+                    {{ prefijo[0] }} ({{ prefijo[1] }})
+                </option>
+                {% endfor %}
+            </select>
+            <a href="{{ url_for('admin_prefijos') }}" class="input-btn" style="text-decoration: none; display: inline-block; text-align: center; margin-left: 10px;">Administrar Prefijos</a>
+            {% if item %}<small>Código actual: {{ item[1] }}</small>{% endif %}
+            </p>  
+            <p>Descripción: <input type="text" name="descripcion" value="{{ item[2] if item else '' }}"></p>
+            <p>Identificador: <input type="text" name="identificador" value="{{ item[3] if item else '' }}"></p>
+            <p>Usuario: <input type="text" name="usuario" value="{{ item[4] if item else '' }}"></p>
+            <p>Departamento: <input type="text" name="departamento" value="{{ item[5] if item else '' }}"></p>
+            <p>Notas: <input type="text" name="notas" value="{{ item[6] if item else '' }}"></p>
+            <p>Foto: <input type="file" name="foto" accept="image/*">
+
+            {% if item and item[7] %}
+                <br><small>Imagen actual:</small><br>
+                <img src="{{ url_for('static', filename='images/' + item[7]) }}" width="100">
+            {% endif %}
+            </p>
+
+            <input class="input-btn" type="submit" value="{{ 'Guardar' if item else 'Agregar' }}">
+            {% if item %}
+                <input class="input-btn" type="submit" value="Cancelar">
+            {% endif %}
+        </form>
+        <div id="back-to-inventory"><a href="{{ url_for('index') }}">← Volver al inventario</a></div>
+    </div>
 
     <h2>Artículos existentes</h2>
     <table >
@@ -48,7 +71,6 @@
         </tr>
         {% endfor %}
     </table>
-    <p><a href="{{ url_for('index') }}">Inventario</a></p>
 </div>
 </body>
 </html>

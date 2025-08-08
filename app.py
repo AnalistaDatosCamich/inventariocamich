@@ -22,10 +22,22 @@ def init_db():
             PRIMARY KEY("id" AUTOINCREMENT)
         )''')
 
+        conn.execute('''CREATE TABLE IF NOT EXISTS "prefijos" (
+            "id"	INTEGER PRIMARY KEY AUTOINCREMENT,
+            "prefijo"	TEXT NOT NULL UNIQUE,
+            "descripcion"	TEXT
+        )''')
+
+        # Insertar algunos prefijos por defecto si no existen
+        conn.execute('''INSERT OR IGNORE INTO prefijos (prefijo, descripcion) VALUES 
+                       ('MON', 'Monitores'),
+                       ('NEV', 'Neveras'), 
+                       ('ESC', 'Escritorios')''')
+
 @app.route('/')
 def index():
     with sqlite3.connect('inventario.db') as conn:
-        items = conn.execute('SELECT * FROM objetos').fetchall()
+        items = conn.execute('SELECT * FROM objetos ORDER BY codigo').fetchall()
     return render_template('index.html', items=items)
 
 @app.route('/admin', methods=['GET', 'POST'])
@@ -34,11 +46,13 @@ def admin():
     item_id = request.args.get("id")
 
     if request.method == 'POST':
-        codigo = request.form['codigo']
+        #codigo = request.form['codigo']
         descripcion = request.form['descripcion']
         usuario = request.form['usuario']
         departamento = request.form['departamento']
         item_id = request.form.get("id")
+        identificador = request.form['identificador']
+        notas = request.form['notas']
         
         foto_file = request.files['foto']
         if foto_file and foto_file.filename != '':
@@ -51,17 +65,34 @@ def admin():
         with sqlite3.connect('inventario.db') as conn:
             if item_id:  # UPDATE
                 if foto_filename:  # Si hay nueva foto
-                    conn.execute('''UPDATE objetos SET codigo=?, descripcion=?, usuario=?, departamento=?, foto_location=? WHERE id=?''',
-                                (codigo, descripcion, usuario, departamento, foto_filename, item_id))
+                    conn.execute('''UPDATE objetos SET  descripcion=?, identificador=?, usuario=?, departamento=?, notas=?, foto_location=? WHERE id=?''',
+                                (descripcion, identificador, usuario, departamento, notas, foto_filename, item_id))
                 else:  # Si no hay nueva foto, mantener la anterior
-                    conn.execute('''UPDATE objetos SET codigo=?, descripcion=?, usuario=?, departamento=? WHERE id=?''',
-                                (codigo, descripcion, usuario, departamento, item_id))
+                    conn.execute('''UPDATE objetos SET  descripcion=?, identificador=?, usuario=?, departamento=?, notas=? WHERE id=?''',
+                                (descripcion, identificador, usuario, departamento, notas, item_id))
             else:  # INSERT
+                prefijo = request.form['prefijo']  # Cambiamos 'codigo' por 'prefijo'
+                # Buscar el último número para este prefijo
+                cursor = conn.execute('''SELECT codigo FROM objetos 
+                                    WHERE codigo LIKE ? 
+                                    ORDER BY codigo DESC LIMIT 1''', (prefijo + '%',))
+                ultimo_codigo = cursor.fetchone()
+                
+                if ultimo_codigo:
+                    # Extraer el número del último código
+                    ultimo_numero = int(ultimo_codigo[0][len(prefijo):])
+                    nuevo_numero = ultimo_numero + 1
+                else:
+                    nuevo_numero = 1
+                
+                codigo = f"{prefijo}{nuevo_numero:03d}"  # Formato 001, 002, etc.
+
                 if not foto_filename:
                     foto_filename = "camich.png"
                 conn.execute('''INSERT INTO objetos (codigo, descripcion, identificador, usuario, departamento, notas, foto_location)
                                 VALUES (?, ?, ?, ?, ?, ?, ?)''',
-                            (codigo, descripcion, "SIN_ID", usuario, departamento, "", foto_filename))
+                            (codigo, descripcion, identificador, usuario, departamento, notas, foto_filename))
+            
 
                 
         return redirect(url_for('admin'))
@@ -72,9 +103,14 @@ def admin():
             item_data = cursor.fetchone()
 
     with sqlite3.connect('inventario.db') as conn:
-        items = conn.execute('SELECT * FROM objetos').fetchall()
+        items = conn.execute('SELECT * FROM objetos ORDER BY codigo').fetchall()
 
-    return render_template('admin.html', items=items, item=item_data)
+    #códigos disponibles
+    with sqlite3.connect('inventario.db') as conn:
+        prefijos_disponibles = conn.execute('SELECT prefijo, descripcion FROM prefijos ORDER BY prefijo').fetchall()
+
+    return render_template('admin.html', items=items, item=item_data, prefijos = prefijos_disponibles)
+
 
 
 @app.route('/delete/<int:item_id>')
@@ -101,6 +137,30 @@ def create_qr(item):
     qr_img = qrcode.make(qr_data)
     return qr_img
 
+@app.route('/admin_prefijos', methods=['GET', 'POST'])
+def admin_prefijos():
+    if request.method == 'POST':
+        prefijo = request.form['prefijo'].upper()
+        descripcion = request.form['descripcion']
+        
+        with sqlite3.connect('inventario.db') as conn:
+            try:
+                conn.execute('INSERT INTO prefijos (prefijo, descripcion) VALUES (?, ?)', 
+                           (prefijo, descripcion))
+            except sqlite3.IntegrityError:
+                pass  # Prefijo ya existe
+    
+    with sqlite3.connect('inventario.db') as conn:
+        prefijos = conn.execute('SELECT * FROM prefijos ORDER BY prefijo').fetchall()
+    
+    return render_template('admin_prefijos.html', prefijos=prefijos)
+
+@app.route('/delete_prefijo/<int:prefijo_id>')
+def delete_prefijo(prefijo_id):
+    with sqlite3.connect('inventario.db') as conn:
+        conn.execute('DELETE FROM prefijos WHERE id = ?', (prefijo_id,))
+    return redirect(url_for('admin_prefijos'))
+
 """def save_foto(item):
     foto_file = request.files['foto']
         if foto_file and foto_file.filename != '':
@@ -112,5 +172,5 @@ def create_qr(item):
 
 if __name__ == '__main__':
     init_db()
-    #app.run(debug=True)
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    app.run(debug=True)
+    #app.run(host='0.0.0.0', port=5000, debug=False)

@@ -55,6 +55,15 @@ h1 {
     background-color: var(--second-color)
 }
 
+.image-section button:active {
+    color: black;
+    background-color: var(--second-color);
+    transition: none;
+    box-shadow:
+        inset -2px -2px 3px rgb(255 255 255 / 0.6),
+        inset 2px 2px 3px rgb(0 0 0 / 0.6);
+}
+
 .nav-link {
     background: none;
     border: 0;
@@ -137,4 +146,10 @@ a:hover {
     flex: 1;
     justify-content: space-evenly;
     flex-direction: row-reverse;
+    flex-wrap: wrap;
+}
+
+.admin-form {
+    display: flex;
+    justify-content: space-around;
 }
