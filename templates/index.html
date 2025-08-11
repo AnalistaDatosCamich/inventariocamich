@@ -27,7 +27,7 @@
                 <td>{{ item[5] }}</td> <!-- departamento -->
                 <td><img src="{{ url_for('static', filename='images/' + (item[7] or 'camich.png')) }}" width="50"></td>
                 <td>
-                    <a href="{{ url_for('item_detail', item_id=item[0]) }}">Ver más</a>
+                    <a href="{{ url_for('item_detail', codigo=item[1]) }}">Ver más</a>
                 </td>
             </tr>
             {% endfor %}

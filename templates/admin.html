@@ -13,8 +13,7 @@
     <div class="admin-form">
         <form method="POST" enctype="multipart/form-data">
             {% if item %}<input type="hidden" name="id" value="{{ item[0] }}">{% endif %}
-            {% if item %}<input type="hidden" name="codigo_actual" value="{{ item[1] }}">{% endif %}            
-
+      
             <p>Prefijo: 
             <select name="prefijo" required {{ 'disabled' if item else '' }}>
                 <option value="">-- Selecciona un prefijo --</option>
@@ -31,7 +30,10 @@
             <p>Identificador: <input type="text" name="identificador" value="{{ item[3] if item else '' }}"></p>
             <p>Usuario: <input type="text" name="usuario" value="{{ item[4] if item else '' }}"></p>
             <p>Departamento: <input type="text" name="departamento" value="{{ item[5] if item else '' }}"></p>
-            <p>Notas: <input type="text" name="notas" value="{{ item[6] if item else '' }}"></p>
+            <div class="note-group">
+                <label for="notas">Notas:</label>
+                <textarea rows="8" cols="50" maxlength="500" name="notas" placeholder="Escribe aquí notas y detalles adicionales del item">{{ item[6] if item }} </textarea>
+            </div>
             <p>Foto: <input type="file" name="foto" accept="image/*">
 
             {% if item and item[7] %}

@@ -85,6 +85,11 @@ td {
     padding-left: 5px;
 }
 
+td:nth-child(1) {
+    font-family: monospace;
+    font-size: large;
+}
+
 th {
     background-color: var(--main-color);
 }

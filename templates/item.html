@@ -24,6 +24,8 @@
                 <button> Descargar QR </button>
             </div>
         </div>
+
+        <div id="pdf-buttons"> <a href="{{ url_for('generar_responsiva', codigo=item[1]) }}" target="_blank"> Descargar responsiva </a></div>
         <div id="back-to-inventory"><a href="{{ url_for('index') }}">← Volver al inventario</a></div>  
     </div>
 
