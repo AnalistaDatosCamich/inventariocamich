@@ -23,8 +23,8 @@
                 </option>
                 {% endfor %}
             </select>
-            <a href="{{ url_for('admin_prefijos') }}" class="input-btn" style="text-decoration: none; display: inline-block; text-align: center; margin-left: 10px;">Administrar Prefijos</a>
-            {% if item %}<small>Código actual: {{ item[1] }}</small>{% endif %}
+            <a href="{{ url_for('admin_prefijos') }}" class="input-btn" id="admin-prefix" style="text-decoration: none; display: inline-block; text-align: center; margin-left: 10px;">Administrar Prefijos</a>
+            {% if item %}<small>Código actual:<code> {{ item[1] }}</code></small>{% endif %}
             </p>  
             <p>Descripción: <input type="text" name="descripcion" value="{{ item[2] if item else '' }}"></p>
             <p>Identificador: <input type="text" name="identificador" value="{{ item[3] if item else '' }}"></p>
@@ -47,7 +47,7 @@
                 <input class="input-btn" type="submit" value="Cancelar">
             {% endif %}
         </form>
-        <div id="back-to-inventory"><a href="{{ url_for('index') }}">← Volver al inventario</a></div>
+        <div id="back-to-index"><a href="{{ url_for('index') }}">← Volver al inventario</a></div>
     </div>
 
     <h2>Artículos existentes</h2>
@@ -69,7 +69,7 @@
             <td>{{ item[5] }}</td> <!-- departamento -->
             <td><img src="{{ url_for('static', filename='images/' + ((item[7]) or 'camich.png')) }}" width="50"></td>
             <td><a href="{{ url_for('admin', id=item[0]) }}">Editar</a></td>
-            <td><a href="{{ url_for('delete', item_id=item[0]) }}">Eliminar</a></td>
+            <td><a href="{{ url_for('delete', item_id=item[0]) }}" onclick="return confirm('¿Seguro que quieres eliminar este elemento?')">Eliminar</a></td>
         </tr>
         {% endfor %}
     </table>

@@ -137,15 +137,65 @@ def item_detail(codigo):
         return render_template('item.html', item=item)
     return "Artículo no encontrado", 404
 
-def create_qr(item):
+@app.route('/qr/<codigo>')
+def generar_qr(codigo):
+    with sqlite3.connect('inventario.db') as conn:
+        item = conn.execute('SELECT * FROM objetos WHERE codigo = ?', (codigo,)).fetchone()
+    
+    if not item:
+        return "Artículo no encontrado", 404
+    
     import qrcode
-    codigo = item[1]
-    descripcion = item[2]
-    usuario = item[3]
-    departamento = item[4]
-    qr_data = f"Código: {codigo} Descripción: {descripcion} Usuario: {usuario} Dpto: {departamento}"
-    qr_img = qrcode.make(qr_data)
-    return qr_img
+    from PIL import Image, ImageDraw, ImageFont
+    
+    # Crear datos del QR
+    qr_data = f"Código: {item[1]}\nDescripción: {item[2]}\nUsuario: {item[4]}\nDpto: {item[5]}"
+    
+    # Generar QR
+    qr = qrcode.QRCode(box_size=8, border=2)
+    qr.add_data(qr_data)
+    qr.make(fit=True)
+    qr_img = qr.make_image(fill_color="black", back_color="white").convert("RGB")
+    
+    # Crear imagen final con QR y texto
+    qr_width, qr_height = qr_img.size
+    text_height = 80  # Espacio para el texto
+    
+    # Imagen final
+    final_img = Image.new('RGB', (qr_width, qr_height + text_height), 'white')
+    final_img.paste(qr_img, (0, 0))
+    
+    # Agregar texto del código
+    draw = ImageDraw.Draw(final_img)
+    try:
+        # Intentar usar fuente monospace
+        font = ImageFont.truetype("cour.ttf", 48)  # Windows
+    except:
+        try:
+            font = ImageFont.truetype("/System/Library/Fonts/Courier.ttc", 48)  # Mac
+        except:
+            font = ImageFont.load_default()  # Fallback
+    
+    # Centrar el texto
+    text = item[1]
+    bbox = draw.textbbox((0, 0), text, font=font)
+    text_width = bbox[2] - bbox[0]
+    x = (qr_width - text_width) // 2
+    y = qr_height + 20
+    
+    draw.text((x, y), text, fill='black', font=font)
+    
+    # Guardar en memoria y enviar
+    buffer = io.BytesIO()
+    final_img.save(buffer, format='PNG')
+    buffer.seek(0)
+    
+    return send_file(
+        buffer,
+        as_attachment=True,
+        download_name=f'QR_{codigo}.png',
+        mimetype='image/png'
+    )
 
 @app.route('/admin_prefijos', methods=['GET', 'POST'])
 def admin_prefijos():

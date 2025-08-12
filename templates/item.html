@@ -10,6 +10,7 @@
 
     <h1>{{ item[1] + " " + item[2]}}</h1> <!-- Descripción -->
     <div class="form-grid">
+        <div class = "total-information">
         <ul id="information">
             <li><strong>Código:</strong> {{ item[1] }}</li>
             <li><strong>Descripción:</strong> {{ item[2] }}</li>
@@ -18,15 +19,24 @@
             <li><strong>Departamento:</strong> {{ item[5] }}</li>
             <li><strong>Notas adicionales:</strong> {{ item[6] }}</li>
         </ul>
+        <div class="back-to-inventory">
+        <div> <a href="{{ url_for('generar_responsiva', codigo=item[1]) }}" target="_blank" class="input-btn"> 
+        Descargar responsiva 
+        </a>
+        </div>
+        <div><a href="{{ url_for('index') }}">← Volver al inventario</a></div>  
+        </div>
+        </div>
         <div class="image-section">
             <div id="item-image"><img src="{{ url_for('static', filename='images/' + (item[7] or 'camich.png')) }}" width="200"></div>  
             <div class="image-buttons">
-                <button> Descargar QR </button>
+                <a href="{{ url_for('generar_qr', codigo=item[1]) }}" target="_blank" class="input-btn" style="text-decoration: none; display: inline-block; text-align: center; margin-left: 10px;"> 
+                    Descargar QR 
+                </a>
             </div>
         </div>
 
-        <div id="pdf-buttons"> <a href="{{ url_for('generar_responsiva', codigo=item[1]) }}" target="_blank"> Descargar responsiva </a></div>
-        <div id="back-to-inventory"><a href="{{ url_for('index') }}">← Volver al inventario</a></div>  
+        
     </div>
 
         
