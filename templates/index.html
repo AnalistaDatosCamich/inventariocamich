@@ -5,33 +5,85 @@
     <title>Inventario</title>
     <link rel="stylesheet" href="../static/style.css">
     <link rel="shortcut icon" href="../static/CamichLogo.ico">
+
+    <!-- jQuery -->
+    <!--<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+    <!-- DataTables CSS -->
+    <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">-->
+    <!-- DataTables JS -->
+    <!--<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>-->
+
+    <!-- CSS Responsive -->
+    <!--<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css"> -->
+
+    <!-- JS Responsive -->
+    <!--<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>-->
+
 </head>
 <body>
     <div id="container">
         <h1>Inventario de Artículos</h1>
         <a href="{{ url_for('admin') }}" class="nav-link">Modo administrador</a>
-        <table >
-            <tr>
-                <th>Código</th>
-                <th>Descripción</th>
-                <th>Usuario</th>
-                <th>Departamento</th>
-                <th>Foto</th>
-                <th>Descripción detallada</th>
-            </tr>
-            {% for item in items %}           
-            <tr>
-                <td>{{ item[1] }}</td> <!-- código -->
-                <td>{{ item[2] }}</td> <!-- descripción -->
-                <td>{{ item[4] }}</td> <!-- usuario -->
-                <td>{{ item[5] }}</td> <!-- departamento -->
-                <td><img src="{{ url_for('static', filename='images/' + (item[7] or 'camich.png')) }}" width="50"></td>
-                <td>
-                    <a href="{{ url_for('item_detail', item_id=item[0]) }}">Ver más</a>
-                </td>
-            </tr>
-            {% endfor %}
+        <table id="items-table" class="display">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Descripción</th>
+                    <th>Usuario</th>
+                    <th>Departamento</th>
+                    <th>Foto</th>
+                    <th>Descripción detallada</th>
+                </tr>
+                <!--<tr>
+                    <th><input type="text" placeholder="Buscar código"></th>
+                    <th><input type="text" placeholder="Buscar descripción"></th>
+                    <th><input type="text" placeholder="Buscar usuario"></th>
+                    <th><input type="text" placeholder="Buscar departamento"></th>
+                    <th></th>
+                    <th></th>
+                </tr>-->
+            </thead>
+            <tbody>
+                {% for item in items %}           
+                <tr>
+                    <td>{{ item[1] }}</td>
+                    <td>{{ item[2] }}</td>
+                    <td>{{ item[4] }}</td>
+                    <td>{{ item[5] }}</td>
+                    <td>
+                        <img src="{{ url_for('static', filename='images/' + (item[7] or 'camich.png')) }}" width="50">
+                    </td>
+                    <td>
+                        <a href="{{ url_for('item_detail', codigo=item[1]) }}">Ver más</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
     </div>
 </body>
+
+<!--<script>
+$(document).ready(function () {
+    var table = $('#items-table').DataTable({
+        orderCellsTop: true,
+        fixedHeader: true,
+        scrollX: true,
+        autoWidth: false
+    });
+
+    $(window).on('resize', function() {
+        table.columns.adjust();
+    });
+
+    // Filtro por columna
+    $('#items-table thead tr:eq(1) th').each(function (i) {
+        $('input', this).on('keyup change', function () {
+            if (table.column(i).search() !== this.value) {
+                table.column(i).search(this.value).draw();
+            }
+        });
+    });
+});
+</script>-->
 </html>
