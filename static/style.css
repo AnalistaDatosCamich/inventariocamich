@@ -1,4 +1,13 @@
 :root {
+    --dt-row-selected: initial !important;
+    --dt-row-selected-text: initial !important;
+    --dt-row-selected-link: initial !important;
+    --dt-row-stripe: initial !important;
+    --dt-row-hover: initial !important;
+    --dt-column-ordering: initial !important;
+    --dt-html-background: initial !important;
+
+
     --main-color: #8db93d;
     --second-color: #0260aa;
     --third-color: aliceblue;
@@ -22,25 +31,6 @@ h1 {
     margin-bottom: 20px;
 }
 
-a, a:visited {
-    color: black;
-    padding: 5px 8px;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: all 0.5s cubic-bezier(0.4, 0, 1, 1);
-    background: var(--main-color);
-}
-
-a:hover {
-    color: var(--main-color);
-}
-
-code {
-    font-family: monospace;
-}
-
-
 #item-image img{
     width: 300px;
     margin: 5px;
@@ -52,85 +42,35 @@ code {
     justify-content: center;
 }
 
-button , .input-btn {
+button, .input-btn, a, a:visited {
+    color:black;
     padding: 10px 20px;
     border: none;
-    border-radius: 5px;
+    border-radius: 20px;
     cursor: pointer;
     font-weight: bold;
     transition: all 0.5s cubic-bezier(0.4, 0, 1, 1);
     background: var(--main-color);
 }
 
-.input-btn {
-    border-radius: 20px;
-}
 
 #admin-prefix {
    font-size: small;
    padding: 5px 10px; 
 }
 
-button:hover, .input-btn:hover , a:hover{
+button:hover, .input-btn:hover, a:hover {
     color: var(--third-color);
     background-color: var(--second-color)
 }
 
-button:active, .input-btn:active , a:active{
+button:active, .input-btn:active {
     color: black;
     background-color: var(--second-color);
     transition: none;
     box-shadow:
         inset -2px -2px 3px rgb(255 255 255 / 0.6),
         inset 2px 2px 3px rgb(0 0 0 / 0.6);
-}
-
-
-.nav-link {
-    background: none;
-    border: 0;
-    color: var(--second-color);
-    display: block;
-}
-
-table {
-    width: 100%;
-}
-
-table, th, td {
-    border: 2px solid;
-    border-color: var(--second-color);
-    border-collapse: collapse;
-}
-
-td {
-    padding-left: 5px;
-}
-
-
-td:nth-child(6) {
-    text-align: center;
-}
-
-th {
-    background-color: var(--main-color);
-}
-
-#items-table {
-    table-layout: fixed; /* mantiene el ancho de columnas estable */
-    width: 100% !important;
-}
-
-
-td:nth-child(1) {
-    font-family: monospace;
-    font-size: large;
-    text-align: center;
-    width: 50px;
-}
-
-#qr-button{
-    background-color: var(--main-color);
 }
 
 
@@ -144,11 +84,6 @@ td:nth-child(1) {
     cursor: pointer;
     transition: all 0.5s ease;
     color: var(--second-color);
-}
-
-#iniciar_sesion:hover {
-    color: aliceblue;
-    background-color: var(--second-color);
 }
 
 #container {
@@ -194,3 +129,35 @@ td:nth-child(1) {
     align-items: flex-end;
 }
 
+table a {
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left: 5px;
+    padding-right: 5px;
+    font-weight: lighter;
+}
+
+table, th, td {
+    border-collapse: collapse;
+    border: px solid #0260aa !important;
+}
+
+th {
+    background-color: var(--main-color);
+}
+
+
+#items-table {
+    border: 2px solid var(--second-color) !important;
+    border-collapse: collapse !important;
+}
+
+
+#items-table thead, th, td {
+    border: 2px solid var(--second-color) !important;
+    border-collapse: collapse !important;
+}
+
+#items-table thead th{
+    background-color: var(--main-color) !important;
+}

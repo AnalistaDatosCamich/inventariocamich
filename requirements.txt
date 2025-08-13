@@ -1,5 +1,6 @@
-Flask==2.3.2
-Werkzeug==2.3.6
-qrcode[pil]==7.4.2
+Flask
+Werkzeug
+qrcode[pil]
 reportlab
 Pillow
+waitress

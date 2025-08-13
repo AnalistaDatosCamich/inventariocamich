@@ -7,11 +7,11 @@
     <link rel="shortcut icon" href="../static/CamichLogo.ico">
 
     <!-- jQuery -->
-    <!--<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- DataTables CSS -->
-    <!-- <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">-->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <!-- DataTables JS -->
-    <!--<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>-->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
     <!-- CSS Responsive -->
     <!--<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css"> -->
@@ -23,8 +23,8 @@
 <body>
     <div id="container">
         <h1>Inventario de Artículos</h1>
-        <a href="{{ url_for('admin') }}" class="nav-link">Modo administrador</a>
-        <table id="items-table" class="display">
+        <a href="{{ url_for('admin') }}" >Modo administrador</a>
+        <table id="items-table">
             <thead>
                 <tr>
                     <th>Código</th>
@@ -34,14 +34,14 @@
                     <th>Foto</th>
                     <th>Descripción detallada</th>
                 </tr>
-                <!--<tr>
+                <tr>
                     <th><input type="text" placeholder="Buscar código"></th>
                     <th><input type="text" placeholder="Buscar descripción"></th>
                     <th><input type="text" placeholder="Buscar usuario"></th>
                     <th><input type="text" placeholder="Buscar departamento"></th>
                     <th></th>
                     <th></th>
-                </tr>-->
+                </tr>
             </thead>
             <tbody>
                 {% for item in items %}           
@@ -63,20 +63,10 @@
     </div>
 </body>
 
-<!--<script>
+<script>
 $(document).ready(function () {
-    var table = $('#items-table').DataTable({
-        orderCellsTop: true,
-        fixedHeader: true,
-        scrollX: true,
-        autoWidth: false
-    });
-
-    $(window).on('resize', function() {
-        table.columns.adjust();
-    });
-
-    // Filtro por columna
+    var table = $('#items-table').DataTable();
+    
     $('#items-table thead tr:eq(1) th').each(function (i) {
         $('input', this).on('keyup change', function () {
             if (table.column(i).search() !== this.value) {
@@ -85,5 +75,5 @@ $(document).ready(function () {
         });
     });
 });
-</script>-->
+</script>
 </html>

@@ -5,6 +5,14 @@
     <title>Administrar Inventario</title>
     <link rel="stylesheet" href="../static/style.css">
     <link rel="shortcut icon" href="../static/CamichLogo.ico">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
 </head>
 <body>
 <div id="container">
@@ -36,9 +44,14 @@
             </div>
             <p>Foto: <input type="file" name="foto" accept="image/*">
 
-            {% if item and item[7] %}
+            {% if item and item[7] and item[7] != "camich.png" %}
                 <br><small>Imagen actual:</small><br>
                 <img src="{{ url_for('static', filename='images/' + item[7]) }}" width="100">
+                <br><a href="{{ url_for('delete_image', item_id=item[0]) }}" 
+                    onclick="return confirm('¿Seguro que quieres eliminar esta imagen?')" 
+                    class="input-btn" >
+                    Borrar imagen
+                </a>
             {% endif %}
             </p>
 
@@ -51,7 +64,8 @@
     </div>
 
     <h2>Artículos existentes</h2>
-    <table >
+    <table id="items-table">
+    <thead>
         <tr>
             <th>Código</th>
             <th>Descripción</th>
@@ -61,6 +75,17 @@
             <th>Editar</th>
             <th>Eliminar</th>
         </tr>
+        <tr>
+            <th><input type="text" placeholder="Buscar código"></th>
+            <th><input type="text" placeholder="Buscar descripción"></th>
+            <th><input type="text" placeholder="Buscar usuario"></th>
+            <th><input type="text" placeholder="Buscar departamento"></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
         {% for item in items %}
         <tr>
             <td>{{ item[1] }}</td> <!-- código -->
@@ -72,7 +97,23 @@
             <td><a href="{{ url_for('delete', item_id=item[0]) }}" onclick="return confirm('¿Seguro que quieres eliminar este elemento?')">Eliminar</a></td>
         </tr>
         {% endfor %}
+    </tbody>
     </table>
 </div>
 </body>
+
+<script>
+$(document).ready(function () {
+    var table = $('#items-table').DataTable();
+    
+    $('#items-table thead tr:eq(1) th').each(function (i) {
+        $('input', this).on('keyup change', function () {
+            if (table.column(i).search() !== this.value) {
+                table.column(i).search(this.value).draw();
+            }
+        });
+    });
+});
+</script>
+
 </html>

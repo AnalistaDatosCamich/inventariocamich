@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_file
+from flask import Flask, render_template, request, redirect, url_for, send_file, current_app
 import sqlite3
 import os
 #import qrcode
@@ -52,81 +52,127 @@ def index():
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
-    item_data = None
-    item_id = request.args.get("id")
+   item_data = None
+   item_id = request.args.get("id")
 
-    if request.method == 'POST':
-        #codigo = request.form['codigo']
-        descripcion = request.form['descripcion']
-        usuario = request.form['usuario']
-        departamento = request.form['departamento']
-        item_id = request.form.get("id")
-        identificador = request.form['identificador']
-        notas = request.form['notas']
+   if request.method == 'POST':
+       descripcion = request.form['descripcion']
+       usuario = request.form['usuario']
+       departamento = request.form['departamento']
+       item_id = request.form.get("id")
+       identificador = request.form['identificador']
+       notas = request.form['notas']
+       
+       with sqlite3.connect('inventario.db') as conn:
+           if item_id:  # UPDATE
+               # Obtener el código del item existente
+               cursor = conn.execute('SELECT codigo FROM objetos WHERE id=?', (item_id,))
+               item_code = cursor.fetchone()[0]
+               
+               foto_file = request.files['foto']
+               if foto_file and foto_file.filename != '':
+                   upload_folder = os.path.join(current_app.static_folder, 'images')
+                   foto_filename = save_image_with_code(foto_file, item_code, upload_folder)
+                   conn.execute('''UPDATE objetos SET descripcion=?, identificador=?, usuario=?, departamento=?, notas=?, foto_location=? WHERE id=?''',
+                               (descripcion, identificador, usuario, departamento, notas, foto_filename, item_id))
+               else:
+                   conn.execute('''UPDATE objetos SET descripcion=?, identificador=?, usuario=?, departamento=?, notas=? WHERE id=?''',
+                               (descripcion, identificador, usuario, departamento, notas, item_id))
+           else:  # INSERT
+               prefijo = request.form['prefijo']
+               cursor = conn.execute('''SELECT codigo FROM objetos 
+                                   WHERE codigo LIKE ? 
+                                   ORDER BY codigo DESC LIMIT 1''', (prefijo + '%',))
+               ultimo_codigo = cursor.fetchone()
+               
+               if ultimo_codigo:
+                   ultimo_numero = int(ultimo_codigo[0][len(prefijo):])
+                   nuevo_numero = ultimo_numero + 1
+               else:
+                   nuevo_numero = 1
+               
+               codigo = f"{prefijo}{nuevo_numero:03d}"
+               
+               foto_file = request.files['foto']
+               if foto_file and foto_file.filename != '':
+                   upload_folder = os.path.join(current_app.static_folder, 'images')
+                   foto_filename = save_image_with_code(foto_file, codigo, upload_folder)
+               else:
+                   foto_filename = "camich.png"
+                   
+               conn.execute('''INSERT INTO objetos (codigo, descripcion, identificador, usuario, departamento, notas, foto_location)
+                               VALUES (?, ?, ?, ?, ?, ?, ?)''',
+                           (codigo, descripcion, identificador, usuario, departamento, notas, foto_filename))
+
+       return redirect(url_for('admin'))
+
+   if item_id:
+       with sqlite3.connect('inventario.db') as conn:
+           cursor = conn.execute('SELECT * FROM objetos WHERE id=?', (item_id,))
+           item_data = cursor.fetchone()
+
+   with sqlite3.connect('inventario.db') as conn:
+       items = conn.execute('SELECT * FROM objetos ORDER BY codigo').fetchall()
+
+   with sqlite3.connect('inventario.db') as conn:
+       prefijos_disponibles = conn.execute('SELECT prefijo, descripcion FROM prefijos ORDER BY prefijo').fetchall()
+
+   return render_template('admin.html', items=items, item=item_data, prefijos = prefijos_disponibles)
+
+def save_image_with_code(file, item_code, upload_folder):
+    """Guarda la imagen con el nombre del código del item"""
+    if file and file.filename != '':
+        # Obtener la extensión del archivo original
+        filename = secure_filename(file.filename)
+        file_extension = os.path.splitext(filename)[1].lower()
         
-        foto_file = request.files['foto']
-        if foto_file and foto_file.filename != '':
-            foto_filename = secure_filename(foto_file.filename)
-            foto_path = os.path.join(app.config['UPLOAD_FOLDER'], foto_filename)
-            foto_file.save(foto_path)
-        else:
-            foto_filename = None
-                    
-        with sqlite3.connect('inventario.db') as conn:
-            if item_id:  # UPDATE
-                if foto_filename:  # Si hay nueva foto
-                    conn.execute('''UPDATE objetos SET  descripcion=?, identificador=?, usuario=?, departamento=?, notas=?, foto_location=? WHERE id=?''',
-                                (descripcion, identificador, usuario, departamento, notas, foto_filename, item_id))
-                else:  # Si no hay nueva foto, mantener la anterior
-                    conn.execute('''UPDATE objetos SET  descripcion=?, identificador=?, usuario=?, departamento=?, notas=? WHERE id=?''',
-                                (descripcion, identificador, usuario, departamento, notas, item_id))
-            else:  # INSERT
-                prefijo = request.form['prefijo']  # Cambiamos 'codigo' por 'prefijo'
-                # Buscar el último número para este prefijo
-                cursor = conn.execute('''SELECT codigo FROM objetos 
-                                    WHERE codigo LIKE ? 
-                                    ORDER BY codigo DESC LIMIT 1''', (prefijo + '%',))
-                ultimo_codigo = cursor.fetchone()
-                
-                if ultimo_codigo:
-                    # Extraer el número del último código
-                    ultimo_numero = int(ultimo_codigo[0][len(prefijo):])
-                    nuevo_numero = ultimo_numero + 1
-                else:
-                    nuevo_numero = 1
-                
-                codigo = f"{prefijo}{nuevo_numero:03d}"  # Formato 001, 002, etc.
+        # Crear el nuevo nombre del archivo con el código del item
+        new_filename = f"{item_code}{file_extension}"
+        
+        # Crear la carpeta si no existe
+        os.makedirs(upload_folder, exist_ok=True)
+        
+        # Guardar el archivo
+        file_path = os.path.join(upload_folder, new_filename)
+        file.save(file_path)
+        
+        return new_filename
+    return None
 
-                if not foto_filename:
-                    foto_filename = "camich.png"
-                conn.execute('''INSERT INTO objetos (codigo, descripcion, identificador, usuario, departamento, notas, foto_location)
-                                VALUES (?, ?, ?, ?, ?, ?, ?)''',
-                            (codigo, descripcion, identificador, usuario, departamento, notas, foto_filename))
-            
-
-                
-        return redirect(url_for('admin'))
-
-    if item_id:
-        with sqlite3.connect('inventario.db') as conn:
-            cursor = conn.execute('SELECT * FROM objetos WHERE id=?', (item_id,))
-            item_data = cursor.fetchone()
-
+@app.route('/delete_image/<int:item_id>')
+def delete_image(item_id):
     with sqlite3.connect('inventario.db') as conn:
-        items = conn.execute('SELECT * FROM objetos ORDER BY codigo').fetchall()
-
-    #códigos disponibles
-    with sqlite3.connect('inventario.db') as conn:
-        prefijos_disponibles = conn.execute('SELECT prefijo, descripcion FROM prefijos ORDER BY prefijo').fetchall()
-
-    return render_template('admin.html', items=items, item=item_data, prefijos = prefijos_disponibles)
-
-
+        # Obtener la imagen actual
+        cursor = conn.execute('SELECT foto_location FROM objetos WHERE id=?', (item_id,))
+        result = cursor.fetchone()
+        
+        if result and result[0] and result[0] != 'camich.png':
+            # Eliminar archivo físico
+            image_path = os.path.join(current_app.static_folder, 'images', result[0])
+            if os.path.exists(image_path):
+                os.remove(image_path)
+        
+        # Actualizar BD para usar imagen por defecto
+        conn.execute('UPDATE objetos SET foto_location=? WHERE id=?', ('camich.png', item_id))
+    
+    return redirect(url_for('admin', id=item_id))
 
 @app.route('/delete/<int:item_id>')
 def delete(item_id):
     with sqlite3.connect('inventario.db') as conn:
+        #Obtener la imagen antes de eliminar el registro
+        cursor = conn.execute("SELECT foto_location FROM objetos WHERE id=?", (item_id,))
+        result = cursor.fetchone()
+
+        #Eliminar archivo físico si exite y no es la imagen por defecto
+        if result and result[0] and result[0] != "camich.png":
+            image_path = os.path.join(current_app.static_folder, "images", result[0])
+            if os.path.exists(image_path):
+                os.remove(image_path)
+
+        #Elimina el registro en la base de datos
         conn.execute('DELETE FROM objetos WHERE id = ?', (item_id,))
+
     return redirect(url_for('admin'))
 
 @app.route('/item/<codigo>')
@@ -394,6 +440,10 @@ def generar_responsiva(codigo):
 
 if __name__ == '__main__':
     init_db()
-    #app.run(debug=True)
-    app.run(host='0.0.0.0', port=10000, debug=False)
-
+    app.run(debug=True)
+    #app.run(
+    #    host='0.0.0.0',  # Permite conexiones desde cualquier IP
+    #    port=5000,       # Puerto que usarás
+    #    debug=False,     # False para producción
+    #    threaded=True    # Permite múltiples conexiones simultáneas
+    #)
