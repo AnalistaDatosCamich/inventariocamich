@@ -1,5 +1,5 @@
-Flask
-qrcode
-pillow
-werkzeug
-gunicorn
+Flask==2.3.3
+Werkzeug==2.3.7
+qrcode==7.4.2
+reportlab==4.0.4
+Pillow==10.0.1
