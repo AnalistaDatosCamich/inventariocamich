@@ -64,7 +64,7 @@ button:hover, .input-btn:hover, a:hover {
     background-color: var(--second-color)
 }
 
-button:active, .input-btn:active {
+button:active, .input-btn:active, a:active{
     color: black;
     background-color: var(--second-color);
     transition: none;
@@ -73,7 +73,21 @@ button:active, .input-btn:active {
         inset 2px 2px 3px rgb(0 0 0 / 0.6);
 }
 
+/* Formateo automático de texto */
+ 
+input[name="usuario"] {
+    text-transform: capitalize;
+}
+input[name="descripcion"] {
+    text-transform: capitalize;
+}
+input[name="departamento"] {
+    text-transform: capitalize;
+}
 
+textarea[name="notas"] {
+    text-transform: capitalize;
+}
 
 #iniciar_sesion {
     background: #e3f2fd;
@@ -139,25 +153,20 @@ table a {
 
 table, th, td {
     border-collapse: collapse;
-    border: px solid #0260aa !important;
+    border: 1px solid #0260aa !important;
 }
 
 th {
-    background-color: var(--main-color);
-}
-
-
-#items-table {
-    border: 2px solid var(--second-color) !important;
-    border-collapse: collapse !important;
-}
-
-
-#items-table thead, th, td {
-    border: 2px solid var(--second-color) !important;
-    border-collapse: collapse !important;
-}
-
-#items-table thead th{
     background-color: var(--main-color) !important;
+    text-align: center !important;
+}
+
+td:nth-child(1), td:nth-child(5){
+    font-family: monospace;
+    font-size: 18px;
+    text-align: center;
+}
+
+td:nth-child(6) {
+    text-align: center;
 }

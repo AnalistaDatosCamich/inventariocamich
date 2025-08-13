@@ -100,6 +100,43 @@
     </tbody>
     </table>
 </div>
+
+<script>
+// Formateo inteligente para nombres propios
+function formatearTexto(texto) {
+    if (!texto) return '';
+        
+    return texto.toLowerCase().split(' ').map((palabra, index) => {
+        // Primera palabra siempre con mayúscula
+        if (index === 0) {
+            return palabra.charAt(0).toUpperCase() + palabra.slice(1);
+        }
+                
+        // Resto de palabras con primera letra mayúscula
+        return palabra.charAt(0).toUpperCase() + palabra.slice(1);
+    }).join(' ');
+}
+
+// Aplicar formato al enviar el formulario
+document.querySelector('form').addEventListener('submit', function() {
+    const campos = ['usuario', 'departamento'];
+    
+    campos.forEach(campo => {
+        const input = document.querySelector(`input[name="${campo}"]`);
+        if (input && input.value) {
+            input.value = formatearTexto(input.value.trim());
+        }
+    });
+    
+    // Para notas (textarea)
+    const notas = document.querySelector('textarea[name="notas"]');
+    if (notas && notas.value) {
+        notas.value = formatearTexto(notas.value.trim());
+    }
+});
+</script>
+
+
 </body>
 
 <script>
