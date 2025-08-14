@@ -14,17 +14,26 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
     <!-- CSS Responsive -->
-    <!--<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css"> -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
 
     <!-- JS Responsive -->
-    <!--<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>-->
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 
 </head>
 <body>
     <div id="container">
         <h1>Inventario de Artículos</h1>
-        <a href="{{ url_for('admin') }}" >Modo administrador</a>
-        <table id="items-table">
+        <h2>Modo administrador</h2>
+
+        <!-- Formulario de login rápido -->
+        <form method="POST" action="{{ url_for('login_admin') }}" style="display:flex; gap:10px; align-items:center;">
+            <input type="text" name="username" placeholder="Usuario" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <button type="submit">Entrar</button>
+        </form>
+
+        <div class="table-container">
+        <table>
             <thead>
                 <tr>
                     <th>Código</th>
@@ -60,12 +69,29 @@
                 {% endfor %}
             </tbody>
         </table>
+        </div>
     </div>
 </body>
 
 <script>
 $(document).ready(function () {
-    var table = $('#items-table').DataTable();
+    var table = $('#items-table').DataTable({
+        orderCellsTop: true,
+        scrollX: true,
+        autoWidth: false
+    });
+
+    // Fix para el desfase del header
+    $(window).on('resize', function() {
+        setTimeout(function() {
+            table.columns.adjust().draw();
+        }, 100);
+    });
+    
+    // Fix inicial
+    setTimeout(function() {
+        table.columns.adjust().draw();
+    }, 200);
     
     $('#items-table thead tr:eq(1) th').each(function (i) {
         $('input', this).on('keyup change', function () {
@@ -75,5 +101,6 @@ $(document).ready(function () {
         });
     });
 });
+
 </script>
 </html>

@@ -105,13 +105,21 @@
 // Formateo inteligente para nombres propios
 function formatearTexto(texto) {
     if (!texto) return '';
-        
+    
+    // Lista de palabras que deben ir en minúsculas (preposiciones, artículos, etc.)
+    const minusculas = ['de', 'del', 'la', 'el', 'los', 'las', 'y', 'e', 'o', 'u', 'en', 'con', 'por', 'para'];
+    
     return texto.toLowerCase().split(' ').map((palabra, index) => {
         // Primera palabra siempre con mayúscula
         if (index === 0) {
             return palabra.charAt(0).toUpperCase() + palabra.slice(1);
         }
-                
+        
+        // Si está en la lista de minúsculas, mantener en minúscula
+        if (minusculas.includes(palabra)) {
+            return palabra;
+        }
+        
         // Resto de palabras con primera letra mayúscula
         return palabra.charAt(0).toUpperCase() + palabra.slice(1);
     }).join(' ');
@@ -119,7 +127,7 @@ function formatearTexto(texto) {
 
 // Aplicar formato al enviar el formulario
 document.querySelector('form').addEventListener('submit', function() {
-    const campos = ['usuario', 'departamento'];
+    const campos = ['descripcion', 'usuario', 'departamento'];
     
     campos.forEach(campo => {
         const input = document.querySelector(`input[name="${campo}"]`);
@@ -136,12 +144,27 @@ document.querySelector('form').addEventListener('submit', function() {
 });
 </script>
 
-
 </body>
 
 <script>
 $(document).ready(function () {
-    var table = $('#items-table').DataTable();
+    var table = $('#items-table').DataTable({
+        orderCellsTop: true,
+        scrollX: true,
+        autoWidth: false
+    });
+
+    // Fix para el desfase del header
+    $(window).on('resize', function() {
+        setTimeout(function() {
+            table.columns.adjust().draw();
+        }, 100);
+    });
+    
+    // Fix inicial
+    setTimeout(function() {
+        table.columns.adjust().draw();
+    }, 200);
     
     $('#items-table thead tr:eq(1) th').each(function (i) {
         $('input', this).on('keyup change', function () {

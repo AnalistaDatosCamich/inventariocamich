@@ -85,9 +85,6 @@ input[name="departamento"] {
     text-transform: capitalize;
 }
 
-textarea[name="notas"] {
-    text-transform: capitalize;
-}
 
 #iniciar_sesion {
     background: #e3f2fd;
@@ -133,15 +130,17 @@ textarea[name="notas"] {
 
 .back-to-inventory {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     margin-top: 20px;
 }
 
 .admin-form {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: flex-end;
 }
+
+
 
 table a {
     padding-top: 3px;
@@ -151,9 +150,10 @@ table a {
     font-weight: lighter;
 }
 
-table, th, td {
+
+table, td, th {
     border-collapse: collapse;
-    border: 1px solid #0260aa !important;
+    border: 1px solid var(--second-color);
 }
 
 th {
@@ -170,3 +170,6 @@ td:nth-child(1), td:nth-child(5){
 td:nth-child(6) {
     text-align: center;
 }
+
+/*********/
+

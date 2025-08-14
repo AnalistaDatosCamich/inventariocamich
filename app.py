@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_file, current_app
+from flask import Flask, render_template, request, redirect, url_for, send_file, current_app, session, flash
 import sqlite3
 import os
 #import qrcode
@@ -13,8 +13,10 @@ from datetime import datetime
 import io
 from PIL import Image as PILImage
 
+from flask import Flask
 
 app = Flask(__name__)
+app.secret_key = "6EF6B30F9E557F948C402C89002C7C8A " 
 app.config['UPLOAD_FOLDER'] = 'static/images'
 
 # Inicializar base de datos
@@ -50,8 +52,26 @@ def index():
         items = conn.execute('SELECT * FROM objetos ORDER BY codigo').fetchall()
     return render_template('index.html', items=items)
 
+
+@app.route('/login_admin', methods=['POST'])
+def login_admin():
+    username = request.form['username']
+    password = request.form['password']
+
+    # Credenciales fijas de ejemplo
+    if username == "admin" and password == "inventarioOP":
+        session['admin'] = True
+        return redirect(url_for('admin'))
+    else:
+        flash("Usuario o contraseña incorrectos", "error")
+        return redirect(url_for('index'))
+
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
+   if not session.get('admin'):
+        return redirect(url_for('index'))
+    # lógica del modo administrador
+
    item_data = None
    item_id = request.args.get("id")
 
