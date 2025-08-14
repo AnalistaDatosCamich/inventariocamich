@@ -460,10 +460,10 @@ def generar_responsiva(codigo):
 
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True)
-    #app.run(
-    #    host='0.0.0.0',  # Permite conexiones desde cualquier IP
-    #    port=5000,       # Puerto que usarás
-    #    debug=False,     # False para producción
-    #    threaded=True    # Permite múltiples conexiones simultáneas
-    #)
+    #app.run(debug=True)
+    app.run(
+        host='0.0.0.0',  # Permite conexiones desde cualquier IP
+        port=5000,       # Puerto que usarás
+        debug=False,     # False para producción
+        threaded=True    # Permite múltiples conexiones simultáneas
+    )
