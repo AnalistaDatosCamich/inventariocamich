@@ -3,7 +3,7 @@
 <html>
 <head>
     <title>Inventario</title>
-    <link rel="stylesheet" href="../static/style.css">
+    <!--<link rel="stylesheet" href="../static/style.css"> -->
     <link rel="shortcut icon" href="../static/CamichLogo.ico">
 
     <!-- jQuery -->
@@ -14,10 +14,10 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
     <!-- CSS Responsive -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    <!--<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">-->
 
     <!-- JS Responsive -->
-    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <!--<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script> -->
 
 </head>
 <body>
@@ -78,7 +78,21 @@ $(document).ready(function () {
     var table = $('#items-table').DataTable({
         orderCellsTop: true,
         scrollX: true,
-        autoWidth: false
+        autoWidth: false,
+        language: {
+            "search": "Buscar:",
+            "lengthMenu": "Mostrar _MENU_ registros por página",
+            "zeroRecords": "No se encontraron resultados",
+            "info": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+            "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+            "infoFiltered": "(filtrado de un total de _MAX_ registros)",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+        }
     });
 
     // Fix para el desfase del header
@@ -93,12 +107,16 @@ $(document).ready(function () {
         table.columns.adjust().draw();
     }, 200);
     
-    $('#items-table thead tr:eq(1) th').each(function (i) {
-        $('input', this).on('keyup change', function () {
-            if (table.column(i).search() !== this.value) {
-                table.column(i).search(this.value).draw();
-            }
-        });
+    // Aplicar búsqueda por columnas - método alternativo
+    $('#items-table thead tr:eq(1) th').each(function (index) {
+        var $input = $(this).find('input');
+        if ($input.length > 0) {
+            console.log('Configurando input para columna:', index);
+            $input.on('keyup change', function () {
+                var val = $.fn.dataTable.util.escapeRegex($(this).val());
+                table.column(index).search(val ? val : '', true, false).draw();
+            });
+        }
     });
 });
 
