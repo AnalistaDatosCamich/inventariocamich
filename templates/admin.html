@@ -149,22 +149,21 @@ document.querySelector('form').addEventListener('submit', function() {
 <script>
 $(document).ready(function () {
     var table = $('#items-table').DataTable({
-        orderCellsTop: true,
-        scrollX: true,
-        autoWidth: false
+        language: {
+            "search": "Buscar:",
+            "lengthMenu": "Mostrar _MENU_ registros por página",
+            "zeroRecords": "No se encontraron resultados",
+            "info": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+            "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+            "infoFiltered": "(filtrado de un total de _MAX_ registros)",
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+        }
     });
-
-    // Fix para el desfase del header
-    $(window).on('resize', function() {
-        setTimeout(function() {
-            table.columns.adjust().draw();
-        }, 100);
-    });
-    
-    // Fix inicial
-    setTimeout(function() {
-        table.columns.adjust().draw();
-    }, 200);
     
     $('#items-table thead tr:eq(1) th').each(function (i) {
         $('input', this).on('keyup change', function () {

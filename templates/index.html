@@ -3,7 +3,7 @@
 <html>
 <head>
     <title>Inventario</title>
-    <!--<link rel="stylesheet" href="../static/style.css"> -->
+    <link rel="stylesheet" href="../static/style.css">
     <link rel="shortcut icon" href="../static/CamichLogo.ico">
 
     <!-- jQuery -->
@@ -76,9 +76,6 @@
 <script>
 $(document).ready(function () {
     var table = $('#items-table').DataTable({
-        orderCellsTop: true,
-        scrollX: true,
-        autoWidth: false,
         language: {
             "search": "Buscar:",
             "lengthMenu": "Mostrar _MENU_ registros por página",
@@ -94,31 +91,14 @@ $(document).ready(function () {
             }
         }
     });
-
-    // Fix para el desfase del header
-    $(window).on('resize', function() {
-        setTimeout(function() {
-            table.columns.adjust().draw();
-        }, 100);
-    });
     
-    // Fix inicial
-    setTimeout(function() {
-        table.columns.adjust().draw();
-    }, 200);
-    
-    // Aplicar búsqueda por columnas - método alternativo
-    $('#items-table thead tr:eq(1) th').each(function (index) {
-        var $input = $(this).find('input');
-        if ($input.length > 0) {
-            console.log('Configurando input para columna:', index);
-            $input.on('keyup change', function () {
-                var val = $.fn.dataTable.util.escapeRegex($(this).val());
-                table.column(index).search(val ? val : '', true, false).draw();
-            });
-        }
+    $('#items-table thead tr:eq(1) th').each(function (i) {
+        $('input', this).on('keyup change', function () {
+            if (table.column(i).search() !== this.value) {
+                table.column(i).search(this.value).draw();
+            }
+        });
     });
 });
-
 </script>
 </html>
